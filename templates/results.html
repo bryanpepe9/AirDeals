@@ -1,0 +1,44 @@
+{% include "template.html" %}
+
+{% block body %}
+<table class="table table-striped table-dark">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">From</th>
+      <th scope="col">To</th>
+      <th scope="col">Price</th>
+      <th scope="col">Departure Location</th>
+      <th scope="col">Arrival Location</th>
+      <th scope="col">Airlines</th>
+      <th scope="col">Class</th>
+      <th scope="col">Departure Day</th>
+      <th scope="col">Departure Time</th>
+      <th scope="col">Return Day</th>
+      <th scope="col">Return Time</th>
+      <th scope="col">Flight Number</th>
+
+    </tr>
+  </thead>
+  <tbody>
+    {% for flight in flights_found %}
+      <tr>
+        <th scope="row">{{ loop.index }}</th>
+        <td>{{ flight.from }}</td>
+        <td>{{ flight.to }}</td>
+        <td>{{ flight.price }}</td>
+        <td>{{ flight.departureAirport }}</td>
+        <td>{{ flight.arrivalAirport }}</td>
+        <td>{{ flight.airlines }}</td>
+        <td>{{ flight.class }}</td>
+        <td>{{ flight.departureDay }}</td>
+        <td>{{ flight.departureTime }}</td>
+        <td>{{ flight.returnDay }}</td>
+        <td>{{ flight.returnTime }}</td>
+        <td>{{ flight.flightNumber }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
