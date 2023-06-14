@@ -78,14 +78,14 @@ def login():
         else:
             login_user(user)
             print(f"Entered password {form.password.data}, hashed password {user.password}")
-            return redirect(url_for("get_all_posts"))
+            return redirect(url_for("index"))
     return render_template("login.html", form=form, current_user=current_user)
 
 
 @app.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('get_all_posts'))
+    return redirect(url_for('index'))
 
 
 
@@ -138,12 +138,19 @@ def flight_search():
         print(new_search.user_id)
         db.session.add(new_search)
         db.session.commit()
-        return redirect(url_for("tracking"))
+        return redirect(url_for("results"))
     return render_template('flight_search.html', form=form)
 
 
 @app.route('/tracking')
 def tracking():
+    tracked_flights = db.session.query(FlightInfo).filter(FlightInfo.user_id == current_user.id).all()
+    print(tracked_flights[0].fly_from)
+    return render_template('tracking.html', tracked_flights=tracked_flights)
+
+
+@app.route('/results')
+def results():
     # Retrieve flight information from the database
     flight_info = FlightInfo.query.filter_by(user_id=current_user.id).first() # This needs to be fixed so it gets all rows matching the user id to perform multiple searches if needed
     if flight_info:
@@ -151,7 +158,8 @@ def tracking():
         flights_found = flight_data.filtered_results
     else:
         flights_found = None
-    return render_template('tracking.html', flights_found=flights_found)
+    return render_template('results.html', flights_found=flights_found)
+
 
 
 
