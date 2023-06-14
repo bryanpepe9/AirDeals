@@ -57,9 +57,37 @@ class FlightInfo(db.Model):
 with app.app_context():
     db.create_all()
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if not user:
+            flash("No user associated with this email, please try again.")
+            return redirect(url_for('login'))
+        elif not check_password_hash(pwhash=user.password, password=form.password.data):
+            print(f"Entered password {form.password.data}, hashed password {user.password}")
+            flash("Password incorrect, please try again.")
+            return redirect(url_for('login'))
+        else:
+            login_user(user)
+            print(f"Entered password {form.password.data}, hashed password {user.password}")
+            return redirect(url_for("get_all_posts"))
+    return render_template("login.html", form=form, current_user=current_user)
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('get_all_posts'))
+
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
