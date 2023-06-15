@@ -11,6 +11,7 @@ from flask_gravatar import Gravatar
 from functools import wraps
 from flask import abort
 from kiwi import Kiwi
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
@@ -145,8 +146,47 @@ def flight_search():
 @app.route('/tracking')
 def tracking():
     tracked_flights = db.session.query(FlightInfo).filter(FlightInfo.user_id == current_user.id).all()
-    print(tracked_flights[0].fly_from)
     return render_template('tracking.html', tracked_flights=tracked_flights)
+
+@app.route('/edit/<int:flight_id>', methods=['GET', 'POST'])
+def edit(flight_id):
+    # The line below is used to query the row from the FlightInfo table that matches the flight_id that the user wants to alter
+    flight_search = FlightInfo.query.get(flight_id)
+    print(datetime.strptime(flight_search.date_from, '%Y-%m-%d'))
+    print(type(datetime.strptime(flight_search.date_from, '%Y-%m-%d')))
+
+
+    # Edit form contains the wtform already populated with the values for each attribute with the db values
+    edit_form = FlightSpecificationForm(
+        fly_from=flight_search.fly_from,
+        fly_to=flight_search.fly_to,
+        date_from=datetime.strptime(flight_search.date_from, '%Y-%m-%d'),
+        date_to=datetime.strptime(flight_search.date_to, '%Y-%m-%d'),
+        flight_type=flight_search.flight_type,
+        max_stopovers=flight_search.max_stopovers,
+        max_fly_duration=flight_search.max_fly_duration,
+        nights_in_dst_from=flight_search.nights_in_dst_from,
+        nights_in_dst_to=flight_search.nights_in_dst_to
+    )
+
+    # If the user submits the form from the edit page, any field that the user may have edited will be updated in the database
+    if edit_form.validate_on_submit():
+        flight_search.fly_from = edit_form.fly_from.data
+        flight_search.fly_to = edit_form.fly_to.data
+        flight_search.date_from = edit_form.date_from.data
+        flight_search.date_to = edit_form.date_to.data
+        flight_search.flight_type = edit_form.date_to.data
+        flight_search.max_stopovers = edit_form.max_stopovers.data
+        flight_search.max_fly_duration = edit_form.max_fly_duration.data
+        flight_search.nights_in_dst_from = edit_form.nights_in_dst_from.data
+        flight_search.nights_in_dst_to = edit_form.nights_in_dst_to.data
+        db.session.commit()
+        return redirect(url_for('tracking'))
+
+    print(flight_search)
+
+    #update the values in the database
+    return render_template('edit.html', flight_id=flight_id, form=edit_form)
 
 
 @app.route('/results')
@@ -159,8 +199,6 @@ def results():
     else:
         flights_found = None
     return render_template('results.html', flights_found=flights_found)
-
-
 
 
 if __name__ == '__main__':
