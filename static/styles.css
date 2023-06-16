@@ -17,3 +17,27 @@ input {
     margin: 10px;
 }
 
+th, td {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.add {
+    display: inline-block;
+    float: right;
+    padding-right: 4rem;
+    padding-top: 0.4rem
+}
+
+.error-message {
+  color: red;
+}
