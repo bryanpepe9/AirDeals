@@ -12,7 +12,7 @@ Twilio_Number = '+18884955482'
 My_Number = '+17542509086'
 
 
-class NotificationManager:
+class SMS_Manager:
     def __init__(self, flights):
         self.flights = flights
         self.client = Client(account_sid, auth_token)
