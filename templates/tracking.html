@@ -1,7 +1,9 @@
 {% include "template.html" %}
 
 {% block body %}
-<h6>Tracked Flights</h6>
+<h4 class="inline-block">Tracked Flights</h4>
+<a href="{{ url_for('flight_search') }}" class="add">+</a>
+
 <table class="table table-striped table-dark">
   <thead>
     <tr>
