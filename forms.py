@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, DateField, IntegerField
 from wtforms.validators import DataRequired, URL, Email
 from flask_ckeditor import CKEditorField
+from wtforms import ValidationError
 
 # WTForm
 # Form used for registering new users
@@ -31,6 +32,15 @@ class FlightSpecificationForm(FlaskForm):
     nights_in_dst_from = IntegerField("Min Number of Days in Destination")
     nights_in_dst_to = IntegerField("Max Number of Days in Destination")
     submit = SubmitField("Find me some flights!")
+
+    def validate_flight_type(self, field):
+        valid_flight_types = ['direct', 'round']
+        if field.data.lower() not in valid_flight_types:
+            raise ValidationError("Invalid flight type. Please choose either 'direct' or 'round'.")
+
+    def validate_date_to(self, field):
+        if self.date_from.data and field.data and self.date_from.data > field.data:
+            raise ValidationError("'Date To' must be after 'Date From'.")
 
 
 
