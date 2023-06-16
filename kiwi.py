@@ -36,7 +36,10 @@ class Kiwi:
         self.TEQUILA_ENDPOINT = 'https://api.tequila.kiwi.com/v2/search'
         self.params = self.get_parameters(search_params)
         self.api_results = self.make_api_call()
-        self.filtered_results = self.organize_api_data(self.api_results)
+        if self.api_results is not None:
+            self.filtered_results = self.organize_api_data(self.api_results)
+        else:
+            self.filtered_results = []
 
     def get_parameters(self, search_params):
         params = {
@@ -54,12 +57,17 @@ class Kiwi:
         return params
 
     def make_api_call(self):
+        """  Makes an API call and returns the data if available.
+        Returns: dict or None: The data retrieved from the API, or None if no data is available.
+        """
         # Making a GET request to the Kiwi API endpoint passing in the parameters specified by the user
         results = requests.get(url=self.TEQUILA_ENDPOINT, headers=self.API_KEY, params=self.params)
         json = results.json()
         print(json)
-        data = json['data']
-        return data
+        if json:
+            data = json['data']
+            return data
+        return None
 
     def organize_api_data(self, flights):
         filtered_data = []
