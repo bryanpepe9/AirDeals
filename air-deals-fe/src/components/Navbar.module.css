@@ -1,0 +1,48 @@
+/* Navbar.module.css */
+/* move my navItems to the left of the navbar */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #e1965c;
+  color: #0a0916;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.logo > img {
+  width: 150px;
+  height: auto;
+}
+
+.navList {
+  list-style-type: none;
+  display: flex;
+  align-items: stretch;
+}
+
+.navItem {
+  margin: 0 1rem;
+}
+
+.navItem > a {
+  text-decoration: none;
+  color: #0a0916;
+}
+
+.authButtons > .button {
+  text-decoration: none;
+}
+
+.button {
+  margin-left: 1rem;
+  width: 200px;
+  border: none;
+  background: none;
+  color: #0a0916;
+}

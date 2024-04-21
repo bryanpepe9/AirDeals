@@ -1,0 +1,139 @@
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.section {
+  height: 100vh; /* Set the height of each section to the viewport height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: B2A3A3; /* Set the text color to white for better visibility */
+}
+
+.evenSection {
+  background-color: #0a0916;
+  color: #e1965c;
+}
+
+.oddSection {
+  background-color: #e1965c;
+  color: #0a0916;
+}
+
+.logo-img {
+  width: 500px;
+  height: auto;
+  padding: 150px;
+}
+
+.container {
+  margin: 0 auto;
+  text-align: center;
+  margin: 0 15%;
+}
+
+.sec2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.info-cards {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 2%;
+}
+
+.section-title {
+  font-size: 3rem;
+}
+
+/* Mouse Scroll Icon */
+.icon-scroll {
+  position: absolute;
+  /* top: 50%; */
+  left: 50%;
+  width: 1em;
+  height: 3.125em;
+  transform: translateX(-50%) scale(2);
+  z-index: 99999;
+}
+
+.icon-arrows::after,
+.icon-arrows::before {
+  content: "";
+}
+.icon-arrows span,
+.icon-arrows::after,
+.icon-arrows::before {
+  display: block;
+  width: 0.315em;
+  height: 0.315em;
+  border-right: 1px solid rgba(225, 150, 92, 0.8);
+  border-bottom: 1px solid rgba(225, 150, 92, 0.8);
+  margin: 0 0 0.125em 0.315em;
+  transform: rotate(45deg);
+  animation: mouse-scroll 1s infinite;
+  animation-direction: alternate;
+}
+
+.icon-arrows::before {
+  margin-top: 0.315em;
+  animation-delay: 0.1s;
+}
+
+.icon-scroll span {
+  animation-delay: 0.2s;
+}
+
+.icon-arrows::after {
+  animation-delay: 0.3s;
+}
+
+.icon-scroll .mouse {
+  height: 1.375em;
+  width: 0.875em;
+  border: 1px solid rgba(225, 150, 92, 0.8);
+  border-radius: 2em;
+}
+
+.icon-scroll .wheel {
+  position: relative;
+  display: block;
+  height: 0.1875em;
+  width: 0.1875em;
+  margin: 0.1875em auto 0;
+  background: rgba(225, 150, 92, 0.8);
+  animation: mouse-wheel 1.2s ease infinite;
+  border-radius: 50%;
+}
+
+@keyframes mouse-wheel {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(0.375em);
+  }
+}
+
+@keyframes mouse-scroll {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
