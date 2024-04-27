@@ -18,17 +18,6 @@ const pool = new Pool({
   port: db_port,
 });
 
-// Test the connection
-pool.query(`SELECT * FROM users`, (err, res) => {
-  if (err) {
-    console.error("Error connecting to the database:", err.stack);
-  } else {
-    console.log("Connected to the database at:", res.rows);
-  }
-  // Note: With Pool, there's no need to manually close the connection
-});
-
-// Function to create a user
 export function createUser(userData) {
   const { firstName, lastName, email, password, phone } = userData;
   console.log(`Going to add this user: ${firstName}`);
@@ -53,7 +42,17 @@ export function createUser(userData) {
   );
 }
 
-// Function to authenticate a user
+export async function getUserByEmail(email) {
+  const query = `
+    SELECT * FROM users
+    WHERE email = $1
+  `;
+  const result = await pool.query(query, [email]);
+
+  console.log("User found:", result.rows[0]);
+  return result.rows[0];
+}
+
 export async function authenticateUser(email, password) {
   const query = `
     SELECT * FROM users
@@ -61,5 +60,79 @@ export async function authenticateUser(email, password) {
   `;
   const result = await pool.query(query, [email, password]);
 
+  return result.rowCount > 0;
+}
+
+export async function addFlightTrack(data) {
+  const {
+    user_id,
+    departure,
+    destination,
+    maxPrice,
+    dateFrom,
+    dateTo,
+    returnFrom,
+    returnTo,
+    minNightsInDest,
+    maxNightsInDest,
+    maxFlyDuration,
+    sameCityReturn,
+    maxStops,
+  } = data;
+
+  const query = `
+    INSERT INTO flight_track (
+      user_id,
+      departure_city,
+      destination_city,
+      max_price,
+      date_from,
+      date_to,
+      return_from,
+      return_to,
+      nights_in_dst_from,
+      nights_in_dst_to,
+      max_fly_duration,
+      diff_city_return,
+      max_stopovers
+    )
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+  `;
+
+  const result = await pool.query(query, [
+    user_id,
+    departure,
+    destination,
+    maxPrice,
+    dateFrom,
+    dateTo,
+    returnFrom,
+    returnTo,
+    minNightsInDest,
+    maxNightsInDest,
+    maxFlyDuration,
+    sameCityReturn,
+    maxStops,
+  ]);
+
+  return result.rowCount > 0;
+}
+
+// Function to retrieve all flight trackers will be executed via cron job
+export async function getFlightTrackers() {
+  const query = `
+    SELECT * FROM flight_track
+  `;
+  const result = await pool.query(query);
+  return result.rows;
+}
+
+// Work on this, see what is being returned from the API and create a table for the flights found.
+export async function insertFlightData(userId, data) {
+  const query = `
+    INSERT INTO found_flights (user_id, data)
+    VALUES ($1, $2)
+  `;
+  const result = await pool.query(query, [userId, data]);
   return result.rowCount > 0;
 }

@@ -2,7 +2,12 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
-import { createUser, authenticateUser } from "./db.js";
+import {
+  createUser,
+  authenticateUser,
+  addFlightTrack,
+  getUserByEmail,
+} from "./db.js";
 import jwt from "jsonwebtoken"; // Import jsonwebtoken package
 
 dotenv.config();
@@ -36,10 +41,16 @@ app.post("/auth/login", async (req, res) => {
     const user = await authenticateUser(email, password);
 
     if (user) {
+      const userData = await getUserByEmail(email);
+
       // Generate JWT token
-      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-        expiresIn: "1h", // Token expires in 1 hour
-      });
+      const token = jwt.sign(
+        { userId: userData.user_id },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1h", // Token expires in 1 hour
+        }
+      );
 
       // Respond with token
       res.status(200).json({ token });
@@ -49,6 +60,52 @@ app.post("/auth/login", async (req, res) => {
     }
   } catch (error) {
     console.error("Error logging in:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.post("/track", async (req, res) => {
+  try {
+    // Extract user_id from JWT token
+    console.log("req.headers.authorization:" + req.headers.authorization);
+    const token = req.headers.authorization.split(" ")[1]; // Assuming the token is sent in the format "Bearer <token>"
+    console.log("token:" + token);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(decoded);
+    const userId = decoded.userId;
+    console.log("userID:" + userId);
+
+    // Combine user_id with flight tracking data
+    const flightTrackData = { ...req.body, user_id: userId };
+
+    // Insert flight tracking data into the database
+    await addFlightTrack(flightTrackData);
+
+    // Respond with success message
+    res.status(200).json({ message: "Flight Preferences Added Successfully" });
+  } catch (error) {
+    console.error("Error adding flight tracking:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.get("/found-flights", async (req, res) => {
+  try {
+    // Extract user_id from JWT token
+    const token = req.headers.authorization.split(" ")[1]; // Assuming the token is sent in the format "Bearer <token>"
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.userId;
+
+    // Combine user_id with flight tracking data
+    const flightTrackData = { ...req.body, user_id: userId };
+
+    // Insert flight tracking data into the database
+    await addFlightTrack(flightTrackData);
+
+    // Respond with success message
+    res.status(200).json({ message: "Retrieved all flights found for user" });
+  } catch (error) {
+    console.error("Error retrieving flight data:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
